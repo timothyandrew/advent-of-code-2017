@@ -1,7 +1,6 @@
 (ns advent-of-code-2017.day-2)
 
 (defn diff-largest-and-smallest [row]
-  (prn row)
   (- (apply max (remove nil? row))
      (apply min (remove nil? row))))
 
