@@ -1,4 +1,4 @@
-(ns advent-of-code-2018.day-8-test
+(ns advent-of-code-2017.day-8-test
   (:require [advent-of-code-2017.day-8 :as sut]
             [clojure.string :as s])
   (:use [clojure.test]))
