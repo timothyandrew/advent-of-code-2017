@@ -1,0 +1,5 @@
+<stream> = (group <(#'\,' | Epsilon)>)+
+group = <#'\{'> ((group | <garbage>) <(#'\,' | Epsilon)>)* <#'\}'>
+garbage = #'<' (cancelled | anything)*  #'>'
+anything = #'[a-zA-Z0-9\{\}\<\,\"\']'
+cancelled = #'\!' #'[a-zA-Z0-9\{\}\<\>\!\,\"\']'
