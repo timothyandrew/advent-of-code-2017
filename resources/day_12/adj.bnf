@@ -1,0 +1,6 @@
+<adj> = number <separator> numbers
+number = #'\d+'
+<numbers> = number | number <comma> <space> numbers
+separator = #'\s\<\-\>\s'
+comma = #','
+space = #'\s'
