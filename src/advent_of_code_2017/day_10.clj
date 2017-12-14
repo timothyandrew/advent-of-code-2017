@@ -49,3 +49,5 @@
        (knot-hash 256 64)
        build-dense-hash
        build-hex))
+
+(def str->kh run-2)
