@@ -11,6 +11,5 @@
   (with-open [rdr (clojure.java.io/reader "resources/day_18/long.txt")]
     (doall (line-seq rdr))))
 
-(deftest part-1
-  (is (= (sut/run-1 short-input) 4))
-  (is (= (sut/run-1 long-input) 3423)))
+(deftest part-2
+  (is (= (sut/run-1 long-input) 7493)))
