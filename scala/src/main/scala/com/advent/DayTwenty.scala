@@ -44,7 +44,23 @@ object ParseLine {
   }
 }
 
-object DayTwenty {
+object RemoveCollisions {
+  def apply(state: State): State = {
+    val particlesByPosition: Map[Coordinates, List[Particle]] = state.particles.groupBy[Coordinates](_.position)
+
+    val withoutCollisions = particlesByPosition.mapValues[List[Particle]] { particles =>
+      if(particles.lengthCompare(1) > 0) {
+        List()
+      } else {
+        particles
+      }
+    }
+
+    State(withoutCollisions.values.flatten.toList)
+  }
+}
+
+object DayTwentyPartOne {
   def apply(input: Iterator[String]): Int = {
     val particles = input.map(ParseLine(_)).toList
     val state = State(particles)
@@ -53,5 +69,17 @@ object DayTwenty {
     val computed = r.foldLeft[State](state)((state, _) => Tick(state))
 
     FindClosestToZero(computed)
+  }
+}
+
+object DayTwentyPartTwo {
+  def apply(input: Iterator[String]): Int = {
+    val particles = input.map(ParseLine(_)).toList
+    val state = State(particles)
+
+    val r = 1 to 1000
+    val computed = r.foldLeft[State](state)((state, _) => RemoveCollisions(Tick(state)))
+
+    computed.particles.length
   }
 }
