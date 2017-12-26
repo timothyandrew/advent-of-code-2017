@@ -18,33 +18,24 @@ class DayTwentyTwoSpec extends FunSuite with Matchers {
     }
   }
 
-  test("Part 1 Sample Two Ticks") {
+  test("Part 2 Sample 100 Ticks") {
     val board = Board(Map()).infect(XY(-1,0)).infect(XY(1,1))
-    val carrier = Carrier(board, XY(0,0), Direction.UP, 0).burst.burst
-
-    assert(carrier.position == XY(-1, 1))
-    assert(carrier.board.infected == Set(XY(0,0), XY(1,1)))
+    val carrier = Carrier(board, XY(0,0), Direction.UP, 0).burstMany(100)
+    
+    assert(carrier.infectionsCaused == 26)
   }
 
-  test("Part 1 Sample 70 Ticks") {
+  test("Part 2 Sample 10000000 Ticks") {
     val board = Board(Map()).infect(XY(-1,0)).infect(XY(1,1))
-    val carrier = Carrier(board, XY(0,0), Direction.UP, 0).burstMany(70)
+    val carrier = Carrier(board, XY(0,0), Direction.UP, 0).burstMany(10000000)
 
-    assert(carrier.position == XY(1, 1))
-    assert(carrier.infectionsCaused == 41)
+    assert(carrier.infectionsCaused == 2511944)
   }
 
-  test("Part 1 Sample 10000 Ticks") {
-    val board = Board(Map()).infect(XY(-1,0)).infect(XY(1,1))
-    val carrier = Carrier(board, XY(0,0), Direction.UP, 0).burstMany(10000)
-
-    assert(carrier.infectionsCaused == 5587)
-  }
-
-  test("Part 1 10000 Ticks") {
+  test("Part 2 10000000 Ticks") {
     val board = parse
-    val carrier = Carrier(board, XY(0,0), Direction.UP, 0).burstMany(10000)
+    val carrier = Carrier(board, XY(0,0), Direction.UP, 0).burstMany(10000000)
 
-    assert(carrier.infectionsCaused == 5587)
+    assert(carrier.infectionsCaused == 2512022)
   }
 }

@@ -14,4 +14,13 @@ object Direction extends Enumeration {
   def turnLeft(old: Direction): Direction = {
     turnRight(turnRight(turnRight(old)))
   }
+
+  def turnBack(old: Direction): Direction = {
+    turnRight(turnRight(old))
+  }
+}
+
+object St extends Enumeration {
+  type St = Value
+  val CLEAN, WEAKENED, INFECTED, FLAGGED = Value
 }
