@@ -1,26 +1,15 @@
 package com.advent
 
-import com.advent.Parse.toCell
 
-case class Rule(in: Cell, out: Cell) {
-  def isMatch(cell: Cell): Boolean = {
-    cell == in || cell == in.rotateLeft || cell == in.rotateLeft.rotateLeft || cell == in.rotateLeft.rotateLeft.rotateLeft ||
-      cell == in.flip || cell == in.flip.rotateLeft || cell == in.flip.rotateLeft.rotateLeft || cell == in.flip.rotateLeft.rotateLeft.rotateLeft
-  }
-
-  def applyRule(cell: Cell): Cell = {
-    if(isMatch(cell)) out else cell
-  }
-}
+case class Rule(in: Cell, out: Cell)
 
 case class Cell(rows: Seq[Seq[Boolean]]) {
   def flip: Cell = {
     Cell(rows.map(_.reverse))
   }
 
-  def transform(rules: Seq[Rule]): Cell = {
-    val rule = rules.filter(_.isMatch(this)).head
-    rule.applyRule(this)
+  def transform(rules: Map[Cell, Rule]): Cell = {
+    rules(this).out
   }
 
   def size: Int = {
@@ -37,19 +26,19 @@ case class Cell(rows: Seq[Seq[Boolean]]) {
 
   def subdivide2x2: Seq[Seq[Cell]] = {
     rows.grouped(2).map {
-      case List(curr: Seq[Boolean], next: Seq[Boolean]) => curr.grouped(2).zip(next.grouped(2)).map {
+      case Vector(curr: Seq[Boolean], next: Seq[Boolean]) => curr.grouped(2).zip(next.grouped(2)).map {
         case (l: Seq[Boolean], r: Seq[Boolean]) => Cell(l :: r :: Nil)
-      }.toList
-    }.toList
+      }.toVector
+    }.toVector
   }
 
   def subdivide3x3: Seq[Seq[Cell]] = {
     rows.grouped(3).map {
-      case List(x: Seq[Boolean], y: Seq[Boolean], z: Seq[Boolean]) =>
+      case Vector(x: Seq[Boolean], y: Seq[Boolean], z: Seq[Boolean]) =>
         (0 until (x.length / 3)).map { i =>
           Cell(x.slice(i * 3, (i * 3) + 3) :: y.slice(i * 3, (i * 3) + 3) :: z.slice(i * 3, (i * 3) + 3) :: Nil)
         }
-    }.toList
+    }.toVector
   }
 }
 
@@ -65,7 +54,7 @@ object CombineCells {
   }
 }
 
-case class Image(cell: Cell, rules: Seq[Rule]) {
+case class Image(cell: Cell, rules: Map[Cell, Rule]) {
   def tick: Image = {
     val transformed: Seq[Seq[Cell]] =
       if(cell.size % 2 == 0) {
@@ -102,14 +91,20 @@ case class Image(cell: Cell, rules: Seq[Rule]) {
 object Parse {
   def toCell(s: String): Cell = {
     val rows: Seq[Seq[Boolean]] = s.trim.split("""\/""").map { partition: String =>
-      partition.split("").map(_ == "#").toList
-    }.toList
+      partition.split("").map(_ == "#").toVector
+    }.toVector
 
     Cell(rows)
   }
 
   def toImage(s: String, rules: Seq[Rule]): Image = {
-    Image(toCell(s), rules)
+    val rulesMap = rules.foldLeft[Map[Cell, Rule]](Map())((rulesMap: Map[Cell, Rule], rule: Rule) => {
+      val cell = rule.in
+      val cellCombos = cell :: cell.rotateLeft :: cell.rotateLeft.rotateLeft :: cell.rotateLeft.rotateLeft.rotateLeft :: cell.flip :: cell.flip.rotateLeft :: cell.flip.rotateLeft.rotateLeft :: cell.flip.rotateLeft.rotateLeft.rotateLeft :: Nil
+      cellCombos.foldLeft(rulesMap)((rulesMap, cell) => rulesMap + (cell -> rule))
+    })
+
+    Image(toCell(s), rulesMap)
   }
 
   def toRule(s: String): Rule = {
